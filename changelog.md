@@ -353,3 +353,17 @@ WirePattern | Process
 
 # general
 - use site.baseurl for images
+
+------------
+# 2016-07-18
+
+/legacy
+- fix https://aretecode.github.io/noflo.github.io/documentation/legacy/#port-events link
+- fix wording on firing pattern for WirePattern
+
+/debugging
+- add more situations, header, and helpful debugging tips
+
+/process-api
+- do @TODO: for explaining bracket forwarding
+- add more explanation and resources for bracket explanation

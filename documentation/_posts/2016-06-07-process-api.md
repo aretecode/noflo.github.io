@@ -377,7 +377,7 @@ a socket listening to the `canada` outport would receive:
 When sending brackets as a group, the `openBracket` and `closeBracket`
 should contain the same data.
 
-Control ports are not wrapped with brackets, they only deal with data.
+Control ports are not wrapped with brackets, they only deal with `data`.
 
 A more advanced example using sub-streams (should be avoided if possible because they add unnecessary complexity):
 
@@ -434,11 +434,67 @@ the output stream would be:
 9) openBracket, '$outtermost'
 ```
 
-@TODO:
-What's happening here is forwardBrackets is
+What's happening here is forwardBrackets is taking the `brackets`, sending the `openBracket`, waiting until the `data` inside of the stream has been sent, then sending the respective `closeBracket`s.
 
-An example of bracket forwarding can be found in
+### Resources
+
+An example of bracket forwarding can be found in:
 [Loading Components inline](/documentation/testing/#loading-components-inline).
+
+A fairly simple usage:
+[SplitObject](https://github.com/aretecode/noflo-objects/blob/master/components/SplitObject.coffee)
+
+And here in the Canadianness project:
+[FindWords](https://github.com/aretecode/canadianness/blob/master/components/FindWords.coffee#L60)
+
+### Example
+
+```coffeescript
+exports.getComponent = ->
+  c = new noflo.Component
+    inPorts: in: datatype: 'all'
+    outPorts: out: datatype: 'all'
+    process: (input, output) ->
+      fruits =  ['apples', 'bananas', 'grapes', 'oranges']
+      veggies = ['broccoli', 'cabbage', 'celery']
+
+      output.ports.out.send new noflo.IP 'openBracket', 'fruit'
+      for fruit in fruits
+        output.ports.out.send fruit
+      output.ports.out.send new noflo.IP 'closeBracket', 'fruit'
+
+      output.ports.out.send new noflo.IP 'openBracket', 'veggies'
+      for veggie in veggies
+        output.ports.out.send veggie
+      output.ports.out.send new noflo.IP 'closeBracket', 'veggies'
+```
+
+### Avoid
+
+To keep things simple, it is usually best practice to strive to avoid using brackets unless necessary.
+
+Brackets can quickly overcomplicate things, when a stream of things is required, an object be substituted for brackets:
+
+```
+output.ports.name.send
+  name: 'fruits'
+  data: fruits
+
+output.ports.name.send
+  name: 'veggies'
+  data: veggies
+```
+
+or
+
+```
+output.ports.name.send
+  names: ['fruits', 'veggies']
+  data:
+    fruits: fruits
+    veggies: veggies
+```
+
 
 -----------------------------------------------------
 
